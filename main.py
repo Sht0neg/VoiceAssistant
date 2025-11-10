@@ -2,6 +2,8 @@ import vosk
 import queue
 import json
 import sounddevice as sd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LogisticRegression
 
 
 q = queue.Queue()
@@ -15,13 +17,17 @@ def callback(indata, frames, time, status):
     q.put(bytes(indata))
 
 
-with sd.RawInputStream(samplerate=samplerate, blocksize = 48000, device=device[0],
-    dtype="int16", channels=1, callback=callback):
+def main():
+    with sd.RawInputStream(samplerate=samplerate, blocksize = 48000, device=device[0],
+        dtype="int16", channels=1, callback=callback):
 
-    rec = vosk.KaldiRecognizer(model, samplerate)
-    while True:
-        data = q.get()
-        if rec.AcceptWaveform(data):
-            data = json.loads(rec.Result())["text"]
-        else:
-            print(rec.PartialResult())
+        rec = vosk.KaldiRecognizer(model, samplerate)
+        while True:
+            data = q.get()
+            if rec.AcceptWaveform(data):
+                data = json.loads(rec.Result())["text"]
+            else:
+                print(rec.PartialResult())
+
+if __name__ == "__main__":
+    main()
