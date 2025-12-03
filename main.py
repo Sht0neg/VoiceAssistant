@@ -4,6 +4,8 @@ import json
 import sounddevice as sd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
+import asyncio
+import skills
 
 
 q = queue.Queue()
