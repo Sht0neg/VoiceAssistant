@@ -1,39 +1,43 @@
+from datetime import datetime as dt
+import re
 import sys
 import os
 import time
 from pathlib import Path
 import webbrowser
+from xmlrpc.client import DateTime
+
 import requests
 import json
 import asyncio
 
 
-async def find_exe(filename, name):
-    print(filename)
+async def find_exe(apps, exes):
+    result = dict()
     for driver in os.listdrives():
         for root, _, files in os.walk(driver):
             for file in files:
-                if filename.lower() == file.lower() and file.lower().endswith(".exe") and "$Recycle.Bin" not in root:
-                        print(os.path.join(root, file))
-                        return {name : os.path.join(root, file)}
-    print("Not found")
-    return ""
+                for name, filename in zip(apps, exes):
+                    if (filename + ".exe").lower() == file.lower() and file.lower().endswith(".exe") and "$Recycle.Bin" not in root:
+                        result[name] = re.sub(r'Program Files[^\\]*', f'"{re.search(r'Program Files[^\\]*', 
+                            os.path.join(root, file)).group(0)}"', os.path.join(root, file)) \
+                            if re.search(r'Program Files[^\\]*', os.path.join(root, file)) else os.path.join(root, file)
+    return result
+
 
 async def path_of_apps_in_json():
-    ex = []
-    tasks = []
-    apps = ["Word", "Exel", "Powerpoint", "Telegram", "Discord", "Whatsapp", "Paint", "AnyDesk", "VirtualBox", "VMWare", "Steam",
-            "CS", "Dota", "Valorant", "Apex", "Fortnite", "League", "PUBG", "GTA5", "MirTankov", "WOT", "Warthunder", "Genshin", "ZZZ", "HonkaiStarRail"]
-    exes = ["WINWORD", "EXCEL", "POWERPNT", "Telegram", "Discord", "WhatsApp", "mspaint", "AnyDesk", "VirtualBox", "vmware", "Steam",
-            "cs2", "dota2", "VALORANT-Win64-Shipping", "r5apex", "FortiniteClient-Win64-Shipping", "RiotClientServices", "TslGame", "GTA5", "Tanki", "worldoftanks", "", "GenshinImpact", "ZenlesZoneZero", "StarRail"]
-    for i, j in zip(apps, exes):
-        task = asyncio.create_task(find_exe(j + ".exe", i))
-        #print(task)
-        tasks.append(task)
-    print(tasks)
-    ex = await asyncio.gather(*tasks)
-    print(ex)
-    return ex
+    apps = ["Word", "Exel", "Powerpoint", "Telegram", "Discord", "Whatsapp", "Paint", "AnyDesk", "VirtualBox", "VMWare",
+            "Steam",
+            "CS", "Dota", "Valorant", "Apex", "Fortnite", "League", "PUBG", "GTA5", "MirTankov", "WOT", "Warthunder",
+            "Genshin", "ZZZ", "HonkaiStarRail"]
+    exes = ["WINWORD", "EXCEL", "POWERPNT", "Telegram", "Discord", "WhatsApp", "mspaint", "AnyDesk", "VirtualBox",
+            "vmware", "Steam",
+            "cs2", "dota2", "VALORANT-Win64-Shipping", "r5apex", "FortiniteClient-Win64-Shipping", "RiotClientServices",
+            "TslGame", "GTA5", "Tanki", "worldoftanks", "aces_BE", "GenshinImpact", "ZenlesZoneZero", "StarRail"]
+
+    result = await find_exe(apps, exes)
+    with open("apps.json", "w") as file:
+        json.dump(result, file, separators=(',\n', ': '))
     
 
 def weather():
