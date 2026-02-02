@@ -40,23 +40,21 @@ async def path_of_apps_in_json():
         json.dump(result, file, separators=(',\n', ': '))
     
 
-def weather():
-    #loc = requests.get('https://ipapi.co/latlong/').text
-    #print(loc)
-    loc = "55.785800,37.625600"
-
+async def weather():
+             
     with open("psw.json") as file:
-        key = json.load(file)["weather"]
-        weather = requests.get("http://api.weatherapi.com/v1/forecast.json", params={"key": key, "q": loc, "lang": "ru", "days": 2})
+        psw = json.load(file)
+        ip = requests.get("https://ifconfig.me/ip").text
+        loc = requests.get(f'https://ipinfo.io/{ip}/json').json()
+        weather = requests.get(f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{loc["loc"]}/{dt.now().strftime('%Y-%m-%dT%H:%M:%S')}?key={psw["weather"]}"
+                               ,params={"include": "current", "unitGroup" : "metric", "lang" : "ru"})
         data = weather.json()
-        t = data["current"]["temp_c"]
-        con = data["current"]["condition"]["text"]
-        wind = data["current"]["wind_kph"]
-        t_feel = data["current"]["feelslike_c"]
-
-        print(data["forecast"])
-
-    #print([loc.json()["latitude"], loc.json()["longitude"]])
+        with open("data.json", "w") as f:
+            json.dump(data, f)
+        with open("data.json") as f:
+            data = json.load(f)
+    
+        
 
 def video():
      webbrowser.open("https://www.youtube.com", new=2)
@@ -80,6 +78,4 @@ def offBot():
 async def passive():
 	print("!")
 
-print(time.strftime("%X"))
-asyncio.run(path_of_apps_in_json())
-print(time.strftime("%X"))
+asyncio.run(weather())
