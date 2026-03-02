@@ -81,6 +81,21 @@ class VoiceAssistantAPI:
             'output': self.output_devices
         }
     
+    def set_devices(self, input_index, output_index):
+        try:
+            self.input_device = int(input_index) if input_index else None
+            self.output_device = int(output_index) if output_index else None
+            
+            current_settings['input_device'] = self.input_device
+            current_settings['output_device'] = self.output_device
+            
+            if self.input_device is not None:
+                sd.default.device = (self.input_device, self.output_device)
+            
+            return {'status': 'success', 'input': self.input_device, 'output': self.output_device}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
     def set_volume(self, volume):
         try:
             self.current_volume = float(volume) / 100.0
@@ -182,4 +197,49 @@ class VoiceAssistantAPI:
                 break
         
         return {'status': 'success', 'message': 'Ассистент остановлен'}
-
+    
+    def save_settings(self, settings):
+        try:
+            current_settings.update(settings)
+            
+            with open('assistant_settings.json', 'w', encoding='utf-8') as f:
+                json.dump(current_settings, f, ensure_ascii=False, indent=2)
+            
+            if settings.get('inputDevice') and settings.get('outputDevice'):
+                self.set_devices(settings['inputDevice'], settings['outputDevice'])
+            
+            if settings.get('volume'):
+                self.set_volume(settings['volume'])
+            
+            return {'status': 'success', 'message': 'Настройки сохранены'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+        
+    
+    def load_settings(self):
+        try:
+            if os.path.exists('assistant_settings.json'):
+                with open('assistant_settings.json', 'r', encoding='utf-8') as f:
+                    settings = json.load(f)
+                
+                if settings.get('input_device'):
+                    self.input_device = settings['input_device']
+                if settings.get('output_device'):
+                    self.output_device = settings['output_device']
+                if settings.get('volume'):
+                    self.current_volume = settings['volume'] / 100.0
+                    current_settings['volume'] = settings['volume']
+                
+                return settings
+            return {}
+        except Exception as e:
+            return {'error': str(e)}
+    
+    def get_assistant_status(self):
+        global assistant_running
+        return {
+            'running': assistant_running,
+            'input_device': self.input_device,
+            'output_device': self.output_device,
+            'volume': current_settings['volume']
+        }

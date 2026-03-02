@@ -6,6 +6,7 @@ import time
 from pathlib import Path
 import webbrowser
 from xmlrpc.client import DateTime
+from datetime import datetime
 
 import requests
 import json
@@ -53,29 +54,41 @@ async def weather():
             json.dump(data, f)
         with open("data.json") as f:
             data = json.load(f)
+        result = { "temp" : data["days"][0]["temp"],
+                   "feelslike" : data["days"][0]["feelslike"],
+                   "windspeed" : data["days"][0]["windspeed"],
+                   "desc" : data["days"][0]["description"]
+                }
+        return f"Температура на улице {result["temp"]}, ощущается как {result["feelslike"]}, скорость ветра {result["windspeed"]}, в целом о погоде {result["desc"]}"
     
         
 
 def video():
-     webbrowser.open("https://www.youtube.com", new=2)
+    webbrowser.open("https://www.youtube.com", new=2)
+    return "Открываю ютуб"
 
 def search(data):
-     webbrowser.open(f"https://www.google.com/search?q={data}", new=2)
+    webbrowser.open(f"https://www.google.com/search?q={data}", new=2)
+    return "Открываю гугл"
 
 def calc():
-     os.system('calc')
+    os.system('calc')
+    return "Открываю калькулятор"
 
+def time():
+    time = datetime.now().strftime("%H:%M")
+    return f"Текущее время {time}"
 
+def date():
+    date = datetime.now().strftime("%d %B %Y")
+    return f"Сегоднящняя дата {date}"
 
 def offpc():
-    #os.system('shutdown \s')
+    os.system('shutdown \s')
     pass
 
 def offBot():
 	sys.exit()
 
-
-async def passive():
-	print("!")
 
 asyncio.run(weather())
