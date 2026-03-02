@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Голосовой ассистент - настройки</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .settings-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.running {
+            background: #4caf50;
+            box-shadow: 0 0 10px #4caf50;
+        }
+
+        .status-indicator.stopped {
+            background: #f44336;
+            box-shadow: 0 0 10px #f44336;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+            animation: fadeIn 0.5s ease;
+            animation-fill-mode: both;
+        }
+
+        .setting-group:nth-child(1) { animation-delay: 0.1s; }
+        .setting-group:nth-child(2) { animation-delay: 0.2s; }
+        .setting-group:nth-child(3) { animation-delay: 0.3s; }
+        .setting-group:nth-child(4) { animation-delay: 0.4s; }
+        .setting-group:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .setting-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .setting-label i {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        .volume-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 2px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .volume-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .select-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 12px;
+            color: #667eea;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #333;
+            background: white;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            transition: border-color 0.3s;
+        }
+
+        select:hover, select:focus {
+            border-color: #667eea;
+        }
+
+        select option {
+            padding: 10px;
+        }
+
+        .device-info {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .device-info i {
+            margin-right: 5px;
+            font-size: 10px;
+            color: #4caf50;
+        }
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .btn-control {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-start {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-start:hover:not(:disabled) {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-stop {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-stop:hover:not(:disabled) {
+            background: #da190b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-control:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .size-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .size-btn {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .size-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .size-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .size-btn small {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .btn-test {
+            background: #4caf50;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-test:hover:not(:disabled) {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .btn-test:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .settings-container {
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .size-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+            }
+        }
+
+        .commands-log {
+            margin-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .commands-log h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .command-item {
+            padding: 8px 12px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .command-time {
+            color: #999;
+            font-size: 11px;
+        }
+
+        .command-text {
+            color: #333;
+            flex: 1;
+        }
+
+        .command-icon {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-container">
+        <div class="header">
+            <h1>🎤 Голосовой ассистент</h1>
+            <p>Настройте параметры для оптимальной работы</p>
+            <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center;">
+                <span class="status-indicator stopped" id="statusIndicator"></span>
+                <span id="assistantStatus">Ассистент остановлен</span>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="setting-group">
+                <div class="setting-label">
+                    <span><i>🔊</i> Громкость ответа</span>
+                    <span class="volume-value" id="volumeValue">70%</span>
+                </div>
+                <input type="range" class="volume-slider" id="volumeSlider" 
+                       min="0" max="100" value="70" step="1">
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">
+                    <span><i>🎙️</i> Устройство ввода (микрофон)</span>
+                </div>
+                <div class="select-wrapper">
+                    <select id="inputDevice">
+                        <option value="">Загрузка устройств...</option>
+                    </select>
+                </div>
+                <div class="device-info" id="inputDeviceInfo">
+                    <i>●</i> Выберите микрофон для ввода голоса
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">
+                    <span><i>🎧</i> Устройство вывода (динамики)</span>
+                    <button class="btn-test" id="testAudioBtn">
+                        <span>▶</span> Тест
+                    </button>
+                </div>
+                <div class="select-wrapper">
+                    <select id="outputDevice">
+                        <option value="">Загрузка устройств...</option>
+                    </select>
+                </div>
+                <div class="device-info" id="outputDeviceInfo">
+                    <i>●</i> Выберите устройство для вывода звука
+                </div>
+            </div>
+            <div class="setting-group">
+                <div class="setting-label">
+                    <span><i>🤖</i> Управление ассистентом</span>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn-control btn-start" id="startAssistantBtn">
+                        <span>▶</span> Запустить
+                    </button>
+                    <button class="btn-control btn-stop" id="stopAssistantBtn" disabled>
+                        <span>⏹</span> Остановить
+                    </button>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">
+                    <span><i>🪟</i> Размер окна</span>
+                </div>
+                <div class="size-buttons">
+                    <button class="size-btn active" data-size="600x700">
+                        Маленький
+                        <small>600x700</small>
+                    </button>
+                    <button class="size-btn" data-size="800x800">
+                        Средний
+                        <small>800x800</small>
+                    </button>
+                    <button class="size-btn" data-size="1000x900">
+                        Большой
+                        <small>1000x900</small>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="commands-log" id="commandsLog">
+                <h4>📋 Последние команды:</h4>
+                <div id="commandsList"></div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="saveBtn">
+                    <span>💾</span> Сохранить и применить
+                </button>
+                <button class="btn btn-secondary" id="cancelBtn">
+                    <span>✖</span> Закрыть
+                </button>
+            </div>
+            
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+    </div>
+    <script>
+        let api = null;
+        let commands = [];
+        
+
+        window.addEventListener('pywebviewready', function() {
+            api = pywebview.api;
+            loadDevices();
+            loadSettings();
+            updateAssistantStatus();
+        });
+
+        async function loadDevices() {
+            try {
+                const devices = await api.get_devices();
+                
+                const inputSelect = document.getElementById('inputDevice');
+                inputSelect.innerHTML = '<option value="">Выберите микрофон</option>';
+                devices.input.forEach(device => {
+                    const option = document.createElement('option');
+                    option.value = device.index;
+                    option.textContent = `${device.name} (${device.channels} каналов, ${device.samplerate}Hz)`;
+                    inputSelect.appendChild(option);
+                });
+                
+                const outputSelect = document.getElementById('outputDevice');
+                outputSelect.innerHTML = '<option value="">Выберите динамики</option>';
+                devices.output.forEach(device => {
+                    const option = document.createElement('option');
+                    option.value = device.index;
+                    option.textContent = `${device.name} (${device.channels} каналов, ${device.samplerate}Hz)`;
+                    outputSelect.appendChild(option);
+                });
+                
+                showStatus('Устройства загружены', 'info');
+            } catch (error) {
+                showStatus('Ошибка загрузки устройств: ' + error, 'error');
+            }
+        }
+
+        async function loadSettings() {
+            try {
+                const settings = await api.load_settings();
+                if (settings.volume) {
+                    document.getElementById('volumeSlider').value = settings.volume;
+                    document.getElementById('volumeValue').textContent = settings.volume + '%';
+                }
+                if (settings.input_device !== undefined) {
+                    document.getElementById('inputDevice').value = settings.input_device;
+                }
+                if (settings.output_device !== undefined) {
+                    document.getElementById('outputDevice').value = settings.output_device;
+                }
+                if (settings.window_size) {
+                    const sizeBtn = document.querySelector(`[data-size="${settings.window_size}"]`);
+                    if (sizeBtn) {
+                        document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+                        sizeBtn.classList.add('active');
+                    }
+                }
+            } catch (error) {
+                console.log('No saved settings');
+            }
+        }
+
+        async function updateAssistantStatus() {
+            try {
+                const status = await api.get_assistant_status();
+                const indicator = document.getElementById('statusIndicator');
+                const statusText = document.getElementById('assistantStatus');
+                const startBtn = document.getElementById('startAssistantBtn');
+                const stopBtn = document.getElementById('stopAssistantBtn');
+                
+                if (status.running) {
+                    indicator.className = 'status-indicator running';
+                    statusText.textContent = 'Ассистент запущен';
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                } else {
+                    indicator.className = 'status-indicator stopped';
+                    statusText.textContent = 'Ассистент остановлен';
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        function addCommandToLog(text) {
+            const time = new Date().toLocaleTimeString();
+            commands.unshift({text, time});
+            
+            if (commands.length > 5) {
+                commands.pop();
+            }
+            
+            const commandsList = document.getElementById('commandsList');
+            commandsList.innerHTML = commands.map(cmd => `
+                <div class="command-item">
+                    <span class="command-time">${cmd.time}</span>
+                    <span class="command-icon">🎯</span>
+                    <span class="command-text">${cmd.text}</span>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('volumeSlider').addEventListener('input', async function(e) {
+            const value = e.target.value;
+            document.getElementById('volumeValue').textContent = value + '%';
+            await api.set_volume(value);
+        });
+
+        document.getElementById('inputDevice').addEventListener('change', async function(e) {
+            const inputInfo = document.getElementById('inputDeviceInfo');
+            const selected = e.target.selectedOptions[0];
+            if (selected && selected.value) {
+                inputInfo.innerHTML = `<i>●</i> Выбрано: ${selected.textContent}`;
+            }
+        });
+
+        document.getElementById('outputDevice').addEventListener('change', async function(e) {
+            const outputInfo = document.getElementById('outputDeviceInfo');
+            const selected = e.target.selectedOptions[0];
+            if (selected && selected.value) {
+                outputInfo.innerHTML = `<i>●</i> Выбрано: ${selected.textContent}`;
+            }
+        });
+
+        document.getElementById('testAudioBtn').addEventListener('click', async function(e) {
+            const btn = e.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Тест';
+            btn.disabled = true;
+            
+            const result = await api.test_audio();
+            
+            if (result.status === 'success') {
+                showStatus('Тестовый сигнал воспроизводится', 'success');
+            } else {
+                showStatus('Ошибка: ' + result.message, 'error');
+            }
+            
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+
+        document.getElementById('startAssistantBtn').addEventListener('click', async function() {
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Запуск...';
+            btn.disabled = true;
+            
+            const result = await api.start_assistant();
+            
+            if (result.status === 'success') {
+                showStatus('Ассистент запущен! Говорите...', 'success');
+                await updateAssistantStatus();
+                addCommandToLog('Ассистент запущен');
+            } else {
+                showStatus('Ошибка: ' + result.message, 'error');
+            }
+            
+            btn.innerHTML = originalText;
+        });
+
+        document.getElementById('stopAssistantBtn').addEventListener('click', async function() {
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Остановка...';
+            btn.disabled = true;
+            
+            const result = await api.stop_assistant();
+        });
+    </script>
