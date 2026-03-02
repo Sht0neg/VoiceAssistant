@@ -80,6 +80,35 @@ class VoiceAssistantAPI:
             'input': self.input_devices,
             'output': self.output_devices
         }
+    
+    def set_volume(self, volume):
+        try:
+            self.current_volume = float(volume) / 100.0
+            current_settings['volume'] = float(volume)
+            return {'status': 'success', 'volume': self.current_volume}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+    
+    def test_audio(self):
+        try:
+            if self.output_device is None:
+                return {'status': 'error', 'message': 'Не выбрано устройство вывода'}
+            
+            duration = 0.5
+            frequency = 440
+            t = np.linspace(0, duration, int(16000 * duration))
+            test_signal = np.sin(2 * np.pi * frequency * t) * self.current_volume
+            
+            def play():
+                sd.play(test_signal, 16000, device=self.output_device)
+                sd.wait()
+            
+            threading.Thread(target=play, daemon=True).start()
+            
+            return {'status': 'success', 'message': 'Тестовый сигнал воспроизводится'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+    
 
 samplerate = int(sd.query_devices(device[0], "input")["default_samplerate"])
 
