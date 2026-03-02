@@ -108,25 +108,78 @@ class VoiceAssistantAPI:
             return {'status': 'success', 'message': 'Тестовый сигнал воспроизводится'}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
-    
+        
+    def start_assistant(self):
+        global assistant_running, assistant_thread
 
-samplerate = int(sd.query_devices(device[0], "input")["default_samplerate"])
+        if assistant_running:
+            return {'status': 'error', 'message': 'Ассистент уже запущен'}
+        
+        if self.input_device is None:
+            return {'status': 'error', 'message': 'Не выбрано устройство ввода'}
+        
+        if self.vosk_model is None:
+            return {'status': 'error', 'message': 'Модель Vosk не загружена'}
+        
+        def audio_callback(indata, frames, time, status):
+            if status:
+                print(f"Status: {status}")
+            q.put(bytes(indata))
+        
+        def run_assistant():
+            global assistant_running
+            try:
+                rec = vosk.KaldiRecognizer(self.vosk_model, 16000)
+                
+                with sd.RawInputStream(
+                    samplerate=16000,
+                    blocksize=8000,
+                    device=self.input_device,
+                    dtype='int16',
+                    channels=1,
+                    callback=audio_callback
+                ):
+                    print("✓ Ассистент запущен. Говорите...")
+                    
+                    while assistant_running:
+                        try:
+                            data = q.get(timeout=1)
+                            
+                            if rec.AcceptWaveform(data):
+                                result = json.loads(rec.Result())
+                                text = result["text"]
+                                if text: 
+                                    print(f"▶ Распознано: {text}")
+                                    self.process_command(text)
+                            else:
+                                partial = json.loads(rec.PartialResult())
+                                if partial.get("partial"):
+                                    print(f"⚡ Частично: {partial['partial']}", end="\r")
+                        except queue.Empty:
+                            continue
+                        except Exception as e:
+                            print(f"Ошибка обработки: {e}")
+                    
+            except Exception as e:
+                print(f"Ошибка в ассистенте: {e}")
+            finally:
+                print("✓ Ассистент остановлен")
+        
+        assistant_running = True
+        assistant_thread = threading.Thread(target=run_assistant, daemon=True)
+        assistant_thread.start()
+        
+        return {'status': 'success', 'message': 'Ассистент запущен'}
 
-def callback(indata, frames, time, status):
-    q.put(bytes(indata))
+    def stop_assistant(self):
+        global assistant_running
+        assistant_running = False
+        
+        while not q.empty():
+            try:
+                q.get_nowait()
+            except queue.Empty:
+                break
+        
+        return {'status': 'success', 'message': 'Ассистент остановлен'}
 
-
-def main():
-    with sd.RawInputStream(samplerate=samplerate, blocksize = 48000, device=device[0],
-        dtype="int16", channels=1, callback=callback):
-
-        rec = vosk.KaldiRecognizer(model, samplerate)
-        while True:
-            data = q.get()
-            if rec.AcceptWaveform(data):
-                data = json.loads(rec.Result())["text"]
-            else:
-                print(rec.PartialResult())
-
-if __name__ == "__main__":
-    main()
