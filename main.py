@@ -12,9 +12,11 @@ import threading
 import os
 import sys
 from datetime import datetime
+import base_words as words
+import voice
 
 
-assistant_running = False
+assistant_running = True
 assistant_thread = None
 current_settings = {
     'volume': 70,
@@ -127,6 +129,14 @@ class VoiceAssistantAPI:
     def start_assistant(self):
         global assistant_running, assistant_thread
 
+        vectorizer = CountVectorizer()
+        vectors = vectorizer.fit_transform(list(words.data_set.keys()))
+    
+        clf = LogisticRegression()
+        clf.fit(vectors, list(words.data_set.values()))
+
+        del words.data_set
+
         if assistant_running:
             return {'status': 'error', 'message': 'Ассистент уже запущен'}
         
@@ -165,7 +175,7 @@ class VoiceAssistantAPI:
                                 text = result["text"]
                                 if text: 
                                     print(f"▶ Распознано: {text}")
-                                    self.process_command(text)
+                                    self.recognize(data, vectorizer, clf)
                             else:
                                 partial = json.loads(rec.PartialResult())
                                 if partial.get("partial"):
@@ -186,6 +196,24 @@ class VoiceAssistantAPI:
         
         return {'status': 'success', 'message': 'Ассистент запущен'}
 
+    
+    def recognize(self, data, vectorizer, clf):
+
+        trg = words.TRIGGERS.intersection(data.split())
+        if not trg:
+            return
+
+        data.replace(list(trg)[0], '')
+
+        text_vector = vectorizer.transform([data]).toarray()[0]
+        answer = clf.predict([text_vector])[0]
+
+        func_name = answer.split()[0]
+
+        voice.speaker(answer.replace(func_name, ''))
+
+        exec(func_name + '()')
+
     def stop_assistant(self):
         global assistant_running
         assistant_running = False
@@ -205,12 +233,13 @@ class VoiceAssistantAPI:
             with open('assistant_settings.json', 'w', encoding='utf-8') as f:
                 json.dump(current_settings, f, ensure_ascii=False, indent=2)
             
-            if settings.get('inputDevice') and settings.get('outputDevice'):
-                self.set_devices(settings['inputDevice'], settings['outputDevice'])
+            if settings.get('input_device') and settings.get('output_device'):
+                self.set_devices(settings['input_device'], settings['output_device'])
             
             if settings.get('volume'):
                 self.set_volume(settings['volume'])
             
+            self.load_settings()
             return {'status': 'success', 'message': 'Настройки сохранены'}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
@@ -223,13 +252,15 @@ class VoiceAssistantAPI:
                     settings = json.load(f)
                 
                 if settings.get('input_device'):
-                    self.input_device = settings['input_device']
+                    self.input_device = int(settings['input_device'])
                 if settings.get('output_device'):
-                    self.output_device = settings['output_device']
+                    self.output_device = int(settings['output_device'])
                 if settings.get('volume'):
                     self.current_volume = settings['volume'] / 100.0
                     current_settings['volume'] = settings['volume']
                 
+                width, height = map(int, str(settings.get("window_size")).split("x"))
+                webview.active_window().resize(width=width, height=height)
                 return settings
             return {}
         except Exception as e:
@@ -243,3 +274,27 @@ class VoiceAssistantAPI:
             'output_device': self.output_device,
             'volume': current_settings['volume']
         }
+        
+def main():
+    api = VoiceAssistantAPI()
+    
+    window = webview.create_window(
+        'Голосовой ассистент - Настройки',
+        html=open("index.html", encoding="UTF-8").read(),
+        js_api=api,
+        width=600,
+        height=700,
+        resizable=True,
+        fullscreen=False,
+        min_size=(400, 500),
+        confirm_close=True
+    )
+    api.load_settings()
+    
+
+    webview.start(debug=False, http_server=True)
+
+    api.start_assistant()
+
+if __name__ == '__main__':
+    main()

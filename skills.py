@@ -7,6 +7,7 @@ from pathlib import Path
 import webbrowser
 from xmlrpc.client import DateTime
 from datetime import datetime
+from voice import speaker
 
 import requests
 import json
@@ -41,7 +42,7 @@ async def path_of_apps_in_json():
         json.dump(result, file, separators=(',\n', ': '))
     
 
-async def weather():
+def weather():
              
     with open("psw.json") as file:
         psw = json.load(file)
@@ -59,36 +60,31 @@ async def weather():
                    "windspeed" : data["days"][0]["windspeed"],
                    "desc" : data["days"][0]["description"]
                 }
-        return f"Температура на улице {result["temp"]}, ощущается как {result["feelslike"]}, скорость ветра {result["windspeed"]}, в целом о погоде {result["desc"]}"
+        'speaker(f"Температура на улице {result["temp"]}, ощущается как {result["feelslike"]}, скорость ветра {result["windspeed"]}, в целом о погоде {result["desc"]}")'
     
         
 
 def video():
     webbrowser.open("https://www.youtube.com", new=2)
-    return "Открываю ютуб"
 
-def search(data):
-    webbrowser.open(f"https://www.google.com/search?q={data}", new=2)
-    return "Открываю гугл"
+def browser():
+    webbrowser.open(f"https://www.google.com", new=2)
 
 def calc():
     os.system('calc')
-    return "Открываю калькулятор"
 
 def time():
     time = datetime.now().strftime("%H:%M")
-    return f"Текущее время {time}"
 
 def date():
     date = datetime.now().strftime("%d %B %Y")
-    return f"Сегоднящняя дата {date}"
 
 def offpc():
-    os.system('shutdown \s')
+    "os.system('shutdown \s')"
     pass
 
 def offBot():
 	sys.exit()
 
-
-asyncio.run(weather())
+def passive():
+    pass

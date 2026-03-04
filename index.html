@@ -2,14 +2,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Голосовой ассистент - настройки</title>
+    <title>Голосовой ассистент - Настройки</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -18,15 +19,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
         }
 
-        .settings-container {
+        .container {
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 600px;
+            max-width: 550px;
             overflow: hidden;
             animation: slideIn 0.5s ease;
         }
@@ -45,14 +46,14 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 25px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .header p {
@@ -60,12 +61,22 @@
             font-size: 14px;
         }
 
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            font-size: 14px;
+        }
+
         .status-indicator {
-            display: inline-block;
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            margin-right: 8px;
             animation: pulse 2s infinite;
         }
 
@@ -80,37 +91,30 @@
         }
 
         @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-            100% {
-                opacity: 1;
-            }
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
         .content {
-            padding: 30px;
+            padding: 25px;
         }
 
-        .setting-group {
+        .section {
             margin-bottom: 25px;
             animation: fadeIn 0.5s ease;
             animation-fill-mode: both;
         }
 
-        .setting-group:nth-child(1) { animation-delay: 0.1s; }
-        .setting-group:nth-child(2) { animation-delay: 0.2s; }
-        .setting-group:nth-child(3) { animation-delay: 0.3s; }
-        .setting-group:nth-child(4) { animation-delay: 0.4s; }
-        .setting-group:nth-child(5) { animation-delay: 0.5s; }
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
             to {
                 opacity: 1;
@@ -118,22 +122,30 @@
             }
         }
 
-        .setting-label {
+        .section-title {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 12px;
             color: #333;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 15px;
         }
 
-        .setting-label i {
+        .section-title i {
             color: #667eea;
-            margin-right: 8px;
+            font-style: normal;
+            font-size: 18px;
         }
 
-        .volume-slider {
-            width: 100%;
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input[type="range"] {
+            flex: 1;
             height: 6px;
             border-radius: 3px;
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
@@ -141,7 +153,7 @@
             -webkit-appearance: none;
         }
 
-        .volume-slider::-webkit-slider-thumb {
+        input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 20px;
             height: 20px;
@@ -153,7 +165,7 @@
             transition: transform 0.2s;
         }
 
-        .volume-slider::-webkit-slider-thumb:hover {
+        input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.1);
         }
 
@@ -161,15 +173,17 @@
             font-size: 18px;
             font-weight: 600;
             color: #667eea;
+            min-width: 50px;
+            text-align: right;
         }
 
         .select-wrapper {
             position: relative;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .select-wrapper::after {
-            content: '▼';
+            content: "▼";
             font-size: 12px;
             color: #667eea;
             position: absolute;
@@ -199,30 +213,38 @@
 
         select option {
             padding: 10px;
+            font-size: 13px;
         }
 
         .device-info {
             font-size: 12px;
-            color: #999;
-            margin-top: 5px;
+            color: #666;
             display: flex;
             align-items: center;
+            gap: 5px;
+            margin-top: 5px;
         }
 
         .device-info i {
-            margin-right: 5px;
-            font-size: 10px;
             color: #4caf50;
-        }
-        .control-buttons {
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
+            font-size: 8px;
         }
 
-        .btn-control {
-            flex: 1;
-            padding: 12px;
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .button-group-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 12px 20px;
             border: none;
             border-radius: 10px;
             font-size: 14px;
@@ -233,41 +255,64 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            flex: 1;
         }
 
-        .btn-start {
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
             background: #4caf50;
             color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
         }
 
-        .btn-start:hover:not(:disabled) {
+        .btn-success:hover:not(:disabled) {
             background: #45a049;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
         }
 
-        .btn-stop {
+        .btn-danger {
             background: #f44336;
             color: white;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
         }
 
-        .btn-stop:hover:not(:disabled) {
+        .btn-danger:hover:not(:disabled) {
             background: #da190b;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
         }
 
-        .btn-control:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            opacity: 0.6;
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #e0e0e0;
+            transform: translateY(-2px);
         }
 
         .size-buttons {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin-top: 10px;
         }
 
         .size-btn {
@@ -282,6 +327,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 3px;
         }
 
         .size-btn:hover {
@@ -299,73 +345,6 @@
         .size-btn small {
             font-size: 10px;
             opacity: 0.8;
-            margin-top: 3px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #666;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
-        }
-
-        .btn-test {
-            background: #4caf50;
-            color: white;
-            padding: 8px 15px;
-            font-size: 14px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-test:hover:not(:disabled) {
-            background: #45a049;
-            transform: scale(1.05);
-        }
-
-        .btn-test:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
         }
 
         .status-message {
@@ -390,22 +369,25 @@
             }
         }
 
-        .status-success {
+        .status-message.success {
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
+            display: flex;
         }
 
-        .status-error {
+        .status-message.error {
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+            display: flex;
         }
 
-        .status-info {
+        .status-message.info {
             background: #d1ecf1;
             color: #0c5460;
             border: 1px solid #bee5eb;
+            display: flex;
         }
 
         .spinner {
@@ -422,241 +404,261 @@
             to { transform: rotate(360deg); }
         }
 
+        .log-container {
+            margin-top: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            background: #f9f9f9;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .log-title {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .log-entry {
+            padding: 6px 10px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 3px solid;
+        }
+
+        .log-entry.recognized {
+            border-left-color: #4caf50;
+        }
+
+        .log-entry.partial {
+            border-left-color: #ff9800;
+        }
+
+        .log-time {
+            color: #999;
+            font-size: 10px;
+            min-width: 55px;
+        }
+
+        .log-text {
+            color: #333;
+            word-break: break-word;
+        }
+
         @media (max-width: 480px) {
-            .settings-container {
-                border-radius: 15px;
-            }
-            
-            .header {
-                padding: 20px;
-            }
-            
             .header h1 {
-                font-size: 24px;
+                font-size: 22px;
             }
             
             .content {
                 padding: 20px;
             }
             
+            .button-group {
+                flex-direction: column;
+            }
+            
             .size-buttons {
                 grid-template-columns: 1fr;
             }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .control-buttons {
-                flex-direction: column;
-            }
-        }
-
-        .commands-log {
-            margin-top: 20px;
-            border-top: 1px solid #e0e0e0;
-            padding-top: 20px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-
-        .commands-log h4 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .command-item {
-            padding: 8px 12px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .command-time {
-            color: #999;
-            font-size: 11px;
-        }
-
-        .command-text {
-            color: #333;
-            flex: 1;
-        }
-
-        .command-icon {
-            color: #667eea;
         }
     </style>
 </head>
 <body>
-    <div class="settings-container">
+    <div class="container">
         <div class="header">
             <h1>🎤 Голосовой ассистент</h1>
             <p>Настройте параметры для оптимальной работы</p>
-            <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center;">
+            <div class="status-bar" id="statusBar">
                 <span class="status-indicator stopped" id="statusIndicator"></span>
-                <span id="assistantStatus">Ассистент остановлен</span>
+                <span id="statusText">Ассистент остановлен</span>
             </div>
         </div>
         
         <div class="content">
-            <div class="setting-group">
-                <div class="setting-label">
-                    <span><i>🔊</i> Громкость ответа</span>
+            <div class="section">
+                <div class="section-title">
+                    <i>🔊</i> Громкость ответа
+                </div>
+                <div class="volume-control">
+                    <input type="range" id="volumeSlider" min="0" max="100" value="70">
                     <span class="volume-value" id="volumeValue">70%</span>
                 </div>
-                <input type="range" class="volume-slider" id="volumeSlider" 
-                       min="0" max="100" value="70" step="1">
             </div>
             
-            <div class="setting-group">
-                <div class="setting-label">
-                    <span><i>🎙️</i> Устройство ввода (микрофон)</span>
+            <div class="section">
+                <div class="section-title">
+                    <i>🎙️</i> Устройство ввода (микрофон)
                 </div>
                 <div class="select-wrapper">
-                    <select id="inputDevice">
-                        <option value="">Загрузка устройств...</option>
-                    </select>
+                    <select id="inputDevice"></select>
                 </div>
-                <div class="device-info" id="inputDeviceInfo">
+                <div class="device-info" id="inputInfo">
                     <i>●</i> Выберите микрофон для ввода голоса
                 </div>
             </div>
             
-            <div class="setting-group">
-                <div class="setting-label">
-                    <span><i>🎧</i> Устройство вывода (динамики)</span>
-                    <button class="btn-test" id="testAudioBtn">
-                        <span>▶</span> Тест
-                    </button>
+            <div class="section">
+                <div class="section-title">
+                    <i>🎧</i> Устройство вывода (динамики)
                 </div>
                 <div class="select-wrapper">
-                    <select id="outputDevice">
-                        <option value="">Загрузка устройств...</option>
-                    </select>
+                    <select id="outputDevice"></select>
                 </div>
-                <div class="device-info" id="outputDeviceInfo">
+                <div class="device-info" id="outputInfo">
                     <i>●</i> Выберите устройство для вывода звука
                 </div>
             </div>
-            <div class="setting-group">
-                <div class="setting-label">
-                    <span><i>🤖</i> Управление ассистентом</span>
+            
+            <div class="section">
+                <div class="section-title">
+                    <i>🤖</i> Управление ассистентом
                 </div>
-                <div class="control-buttons">
-                    <button class="btn-control btn-start" id="startAssistantBtn">
-                        <span>▶</span> Запустить
+                <div class="button-group-vertical">
+                    <button class="btn-success" id="startBtn" onclick="startAssistant()">
+                        <span>▶</span> Запустить ассистента
                     </button>
-                    <button class="btn-control btn-stop" id="stopAssistantBtn" disabled>
-                        <span>⏹</span> Остановить
+                    <button class="btn-danger" id="stopBtn" onclick="stopAssistant()" disabled>
+                        <span>⏹</span> Остановить ассистента
+                    </button>
+                    <button class="btn-primary" id="testBtn" onclick="testAudio()">
+                        <span>🔊</span> Тест звука
                     </button>
                 </div>
             </div>
             
-            <div class="setting-group">
-                <div class="setting-label">
-                    <span><i>🪟</i> Размер окна</span>
+            <div class="section">
+                <div class="section-title">
+                    <i>🪟</i> Размер окна
                 </div>
                 <div class="size-buttons">
-                    <button class="size-btn active" data-size="600x700">
+                    <button class="size-btn active" data-size="600x700" onclick="changeWindowSize('600x700')">
                         Маленький
                         <small>600x700</small>
                     </button>
-                    <button class="size-btn" data-size="800x800">
+                    <button class="size-btn" data-size="800x800" onclick="changeWindowSize('800x800')">
                         Средний
                         <small>800x800</small>
                     </button>
-                    <button class="size-btn" data-size="1000x900">
+                    <button class="size-btn" data-size="1000x900" onclick="changeWindowSize('1000x900')">
                         Большой
                         <small>1000x900</small>
                     </button>
                 </div>
             </div>
             
-            <div class="commands-log" id="commandsLog">
-                <h4>📋 Последние команды:</h4>
-                <div id="commandsList"></div>
+            <div class="log-container" id="logContainer">
+                <div class="log-title">
+                    <span>📋</span> Последние команды:
+                </div>
+                <div id="logEntries"></div>
             </div>
             
-            <div class="action-buttons">
-                <button class="btn btn-primary" id="saveBtn">
-                    <span>💾</span> Сохранить и применить
+            <div class="button-group">
+                <button class="btn-primary" onclick="saveSettings()">
+                    <span>💾</span> Сохранить
                 </button>
-                <button class="btn btn-secondary" id="cancelBtn">
+                <button class="btn-secondary" onclick="closeWindow()">
                     <span>✖</span> Закрыть
                 </button>
             </div>
-            
             <div class="status-message" id="statusMessage"></div>
         </div>
     </div>
+
     <script>
         let api = null;
-        let commands = [];
+        let logEntries = [];
         
-
         window.addEventListener('pywebviewready', function() {
+            console.log('pywebview готов');
             api = pywebview.api;
             loadDevices();
             loadSettings();
             updateAssistantStatus();
+            startLogPolling();
+            
+            document.getElementById('volumeSlider').addEventListener('input', function(e) {
+                updateVolume(e.target.value);
+            });
+            
+            document.getElementById('inputDevice').addEventListener('change', function(e) {
+                updateInputDevice(e.target.value);
+                updateInputInfo();
+            });
+            
+            document.getElementById('outputDevice').addEventListener('change', function(e) {
+                updateOutputDevice(e.target.value);
+                updateOutputInfo();
+            });
         });
 
         async function loadDevices() {
             try {
                 const devices = await api.get_devices();
+                console.log('Устройства загружены:', devices);
                 
                 const inputSelect = document.getElementById('inputDevice');
                 inputSelect.innerHTML = '<option value="">Выберите микрофон</option>';
-                devices.input.forEach(device => {
-                    const option = document.createElement('option');
-                    option.value = device.index;
-                    option.textContent = `${device.name} (${device.channels} каналов, ${device.samplerate}Hz)`;
-                    inputSelect.appendChild(option);
-                });
                 
+                if (devices.input && devices.input.length > 0) {
+                    devices.input.forEach(device => {
+                        const option = document.createElement('option');
+                        option.value = device.index;
+                        option.textContent = `${device.name} (${device.channels} каналов, ${device.samplerate}Hz)`;
+                        inputSelect.appendChild(option);
+                    });
+                }
                 const outputSelect = document.getElementById('outputDevice');
                 outputSelect.innerHTML = '<option value="">Выберите динамики</option>';
-                devices.output.forEach(device => {
-                    const option = document.createElement('option');
-                    option.value = device.index;
-                    option.textContent = `${device.name} (${device.channels} каналов, ${device.samplerate}Hz)`;
-                    outputSelect.appendChild(option);
-                });
                 
-                showStatus('Устройства загружены', 'info');
+                if (devices.output && devices.output.length > 0) {
+                    devices.output.forEach(device => {
+                        const option = document.createElement('option');
+                        option.value = device.index;
+                        option.textContent = `${device.name} (${device.channels} каналов, ${device.samplerate}Hz)`;
+                        outputSelect.appendChild(option);
+                    });
+                }
+                
+                showStatus('Устройства загружены', 'success');
             } catch (error) {
-                showStatus('Ошибка загрузки устройств: ' + error, 'error');
+                console.error('Ошибка загрузки устройств:', error);
+                showStatus('Ошибка загрузки устройств', 'error');
             }
         }
 
         async function loadSettings() {
             try {
                 const settings = await api.load_settings();
+                console.log('Настройки загружены:', settings);
+                
                 if (settings.volume) {
                     document.getElementById('volumeSlider').value = settings.volume;
                     document.getElementById('volumeValue').textContent = settings.volume + '%';
                 }
-                if (settings.input_device !== undefined) {
+                
+                if (settings.input_device !== undefined && settings.input_device !== null) {
                     document.getElementById('inputDevice').value = settings.input_device;
+                    updateInputInfo();
                 }
-                if (settings.output_device !== undefined) {
+                
+                if (settings.output_device !== undefined && settings.output_device !== null) {
                     document.getElementById('outputDevice').value = settings.output_device;
-                }
-                if (settings.window_size) {
-                    const sizeBtn = document.querySelector(`[data-size="${settings.window_size}"]`);
-                    if (sizeBtn) {
-                        document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
-                        sizeBtn.classList.add('active');
-                    }
+                    updateOutputInfo();
                 }
             } catch (error) {
-                console.log('No saved settings');
+                console.error('Ошибка загрузки настроек:', error);
             }
         }
 
@@ -664,9 +666,9 @@
             try {
                 const status = await api.get_assistant_status();
                 const indicator = document.getElementById('statusIndicator');
-                const statusText = document.getElementById('assistantStatus');
-                const startBtn = document.getElementById('startAssistantBtn');
-                const stopBtn = document.getElementById('stopAssistantBtn');
+                const statusText = document.getElementById('statusText');
+                const startBtn = document.getElementById('startBtn');
+                const stopBtn = document.getElementById('stopBtn');
                 
                 if (status.running) {
                     indicator.className = 'status-indicator running';
@@ -680,93 +682,228 @@
                     stopBtn.disabled = true;
                 }
             } catch (error) {
-                console.error('Error updating status:', error);
+                console.error('Ошибка обновления статуса:', error);
             }
         }
+        function startLogPolling() {
+            setInterval(async () => {
+                try {
+                } catch (error) {
+                    console.error('Ошибка получения лога:', error);
+                }
+            }, 1000);
+        }
 
-        function addCommandToLog(text) {
+        function addLogEntry(text, type) {
             const time = new Date().toLocaleTimeString();
-            commands.unshift({text, time});
+            logEntries.unshift({ time, text, type });
             
-            if (commands.length > 5) {
-                commands.pop();
+            if (logEntries.length > 10) {
+                logEntries.pop();
             }
             
-            const commandsList = document.getElementById('commandsList');
-            commandsList.innerHTML = commands.map(cmd => `
-                <div class="command-item">
-                    <span class="command-time">${cmd.time}</span>
-                    <span class="command-icon">🎯</span>
-                    <span class="command-text">${cmd.text}</span>
+            const logContainer = document.getElementById('logEntries');
+            logContainer.innerHTML = logEntries.map(entry => `
+                <div class="log-entry ${entry.type}">
+                    <span class="log-time">${entry.time}</span>
+                    <span class="log-text">${entry.text}</span>
                 </div>
             `).join('');
         }
 
-        document.getElementById('volumeSlider').addEventListener('input', async function(e) {
-            const value = e.target.value;
+        async function updateVolume(value) {
             document.getElementById('volumeValue').textContent = value + '%';
-            await api.set_volume(value);
-        });
-
-        document.getElementById('inputDevice').addEventListener('change', async function(e) {
-            const inputInfo = document.getElementById('inputDeviceInfo');
-            const selected = e.target.selectedOptions[0];
-            if (selected && selected.value) {
-                inputInfo.innerHTML = `<i>●</i> Выбрано: ${selected.textContent}`;
+            if (api) {
+                try {
+                    await api.set_volume(value);
+                } catch (error) {
+                    console.error('Ошибка установки громкости:', error);
+                }
             }
-        });
+        }
 
-        document.getElementById('outputDevice').addEventListener('change', async function(e) {
-            const outputInfo = document.getElementById('outputDeviceInfo');
-            const selected = e.target.selectedOptions[0];
-            if (selected && selected.value) {
-                outputInfo.innerHTML = `<i>●</i> Выбрано: ${selected.textContent}`;
+        async function updateInputDevice(index) {
+            if (api && index) {
+                try {
+                    await api.set_devices(index, null);
+                } catch (error) {
+                    console.error('Ошибка установки устройства ввода:', error);
+                }
             }
-        });
+        }
 
-        document.getElementById('testAudioBtn').addEventListener('click', async function(e) {
-            const btn = e.target;
+        async function updateOutputDevice(index) {
+            if (api && index) {
+                try {
+                    await api.set_devices(null, index);
+                } catch (error) {
+                    console.error('Ошибка установки устройства вывода:', error);
+                }
+            }
+        }
+
+        function updateInputInfo() {
+            const select = document.getElementById('inputDevice');
+            const info = document.getElementById('inputInfo');
+            const selected = select.options[select.selectedIndex];
+            
+            if (selected && selected.value) {
+                info.innerHTML = `<i>●</i> Выбрано: ${selected.textContent}`;
+            } else {
+                info.innerHTML = '<i>●</i> Выберите микрофон для ввода голоса';
+            }
+        }
+
+        function updateOutputInfo() {
+            const select = document.getElementById('outputDevice');
+            const info = document.getElementById('outputInfo');
+            const selected = select.options[select.selectedIndex];
+            
+            if (selected && selected.value) {
+                info.innerHTML = `<i>●</i> Выбрано: ${selected.textContent}`;
+            } else {
+                info.innerHTML = '<i>●</i> Выберите устройство для вывода звука';
+            }
+        }
+
+        async function startAssistant() {
+            const btn = document.getElementById('startBtn');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner"></span> Тест';
+            
+            btn.innerHTML = '<span class="spinner"></span> Запуск...';
             btn.disabled = true;
             
-            const result = await api.test_audio();
+            try {
+                const result = await api.start_assistant();
+                console.log('Результат запуска:', result);
+                
+                if (result.status === 'success') {
+                    showStatus('Ассистент запущен! Говорите...', 'success');
+                    addLogEntry('Ассистент запущен', 'recognized');
+                    await updateAssistantStatus();
+                } else {
+                    showStatus('Ошибка: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка запуска:', error);
+                showStatus('Ошибка запуска ассистента', 'error');
+            }
             
-            if (result.status === 'success') {
-                showStatus('Тестовый сигнал воспроизводится', 'success');
-            } else {
-                showStatus('Ошибка: ' + result.message, 'error');
+            btn.innerHTML = originalText;
+        }
+
+        async function stopAssistant() {
+            const btn = document.getElementById('stopBtn');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<span class="spinner"></span> Остановка...';
+            btn.disabled = true;
+            
+            try {
+                const result = await api.stop_assistant();
+                console.log('Результат остановки:', result);
+                
+                if (result.status === 'success') {
+                    showStatus('Ассистент остановлен', 'success');
+                    addLogEntry('Ассистент остановлен', 'recognized');
+                    await updateAssistantStatus();
+                } else {
+                    showStatus('Ошибка: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка остановки:', error);
+                showStatus('Ошибка остановки ассистента', 'error');
+            }
+            
+            btn.innerHTML = originalText;
+        }
+
+
+        async function testAudio() {
+            const btn = document.getElementById('testBtn');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<span class="spinner"></span> Тест...';
+            btn.disabled = true;
+            
+            try {
+                const result = await api.test_audio();
+                console.log('Результат теста:', result);
+                
+                if (result.status === 'success') {
+                    showStatus('Тестовый сигнал воспроизводится', 'success');
+                    addLogEntry('Тестовый сигнал', 'recognized');
+                } else {
+                    showStatus('Ошибка: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка теста:', error);
+                showStatus('Ошибка воспроизведения', 'error');
             }
             
             btn.innerHTML = originalText;
             btn.disabled = false;
-        });
+        }
 
-        document.getElementById('startAssistantBtn').addEventListener('click', async function() {
-            const btn = this;
+        function changeWindowSize(size) {
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const [width, height] = size.split('x');
+            window.resizeTo(parseInt(width), parseInt(height));
+        }
+
+        async function saveSettings() {
+            const btn = event.target;
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner"></span> Запуск...';
+            
+            btn.innerHTML = '<span class="spinner"></span> Сохранение...';
             btn.disabled = true;
             
-            const result = await api.start_assistant();
-            
-            if (result.status === 'success') {
-                showStatus('Ассистент запущен! Говорите...', 'success');
-                await updateAssistantStatus();
-                addCommandToLog('Ассистент запущен');
-            } else {
-                showStatus('Ошибка: ' + result.message, 'error');
+            try {
+                const settings = {
+                    volume: document.getElementById('volumeSlider').value,
+                    input_device: document.getElementById('inputDevice').value,
+                    output_device: document.getElementById('outputDevice').value,
+                    window_size: document.querySelector('.size-btn.active').dataset.size
+                };
+                
+                const result = await api.save_settings(settings);
+                console.log('Результат сохранения:', result);
+                
+                if (result.status === 'success') {
+                    showStatus('Настройки сохранены', 'success');
+                } else {
+                    showStatus('Ошибка: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка сохранения:', error);
+                showStatus('Ошибка сохранения настроек', 'error');
             }
             
             btn.innerHTML = originalText;
-        });
+            btn.disabled = false;
+        }
 
-        document.getElementById('stopAssistantBtn').addEventListener('click', async function() {
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner"></span> Остановка...';
-            btn.disabled = true;
+        function closeWindow() {
+            window.close();
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('statusMessage');
+            status.textContent = message;
+            status.className = 'status-message ' + type;
             
-            const result = await api.stop_assistant();
-        });
+            setTimeout(() => {
+                status.className = 'status-message';
+            }, 3000);
+        }
+        window.onerror = function(msg, url, line) {
+            console.error('Ошибка:', msg, url, line);
+            showStatus('Произошла ошибка', 'error');
+        };
     </script>
+</body>
+</html>
