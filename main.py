@@ -76,18 +76,26 @@ class VoiceAssistantAPI:
         text_vector = vectorizer.transform([data]).toarray()[0]
         answer = clf.predict([text_vector])[0]
         func_name = answer.split()[0]
+        print(data)
 
         self.speak(answer.replace(func_name, ''))
 
-        if func_name == "search":
-            exec(func_name + f"('{re.sub(r"(искра|искорка) найди", "", data)}')")
-            return
-        if func_name == "video_search":
-            exec(func_name + f"('{re.sub(r"(искра|искорка) открой в ютубе", "", data)}')")
-            return
-        exec(func_name + '()')
-        if func_name == "weather":
-            self.speak(self.get_weather())
+        try:
+            if func_name == "search":
+                exec(func_name + f"('{re.sub(r"(искра|искорка) найди", "", data)}')")
+                return
+            if func_name == "video_search":
+                exec(func_name + f"('{re.sub(r"(искра|искорка) открой в ютубе", "", data)}')")
+                return
+            if re.fullmatch(r"game\(*\)", func_name):
+                exec(func_name)
+                return
+            else:
+                exec(func_name + '()')
+            if func_name == "weather":
+                self.speak(self.get_weather())
+        except Exception as e:
+            pass
     
     def start_voice_assistant(self):
         self.get_input_device()
