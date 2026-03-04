@@ -57,14 +57,13 @@ async def weather():
         
 
 def video():
-     webbrowser.open("https://www.youtube.com", new=2)
+    webbrowser.open("https://www.youtube.com", new=2)
 
-def search(data):
-     webbrowser.open(f"https://www.google.com/search?q={data}", new=2)
+def browser():
+    webbrowser.open(f"https://www.google.com", new=2)
 
 def calc():
      os.system('calc')
-
 
 
 def offpc():
@@ -74,8 +73,5 @@ def offpc():
 def offBot():
 	sys.exit()
 
-
-async def passive():
-	print("!")
-
-asyncio.run(weather())
+def passive():
+	pass
