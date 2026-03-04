@@ -1,3 +1,6 @@
+import subprocess
+import threading
+
 import vosk
 import queue
 import json
@@ -50,18 +53,10 @@ class VoiceAssistantAPI:
             with open("data.json") as f:
                 data = json.load(f)
                 return f"Сейчас на улице {data["days"][0]["description"]}, {data["days"][0]["temp"]} градусов, ощущается как {data["days"][0]["feelslike"]} градусов, скорость ветра {data["days"][0]["windspeed"]} метров в секунду"
-
-    def engine_init(self):
-        self.engine = pyttsx3.init()
-        self.engine.setProperty('rate', 180)	
-        self.engine.setProperty('volume', self.current_volume)
     
     def speak(self, text):
-        self.engine_init()
-        self.engine.say(text)
-        self.engine.runAndWait()
-        self.engine.stop()
-        del self.engine
+        cmd = f'spd-say -o rhvoice -y "Arina" -i {self.current_volume * 100} "{text}"'
+        os.system(cmd)
 
     def callback(self, indata, frames, time, status):
         q.put(bytes(indata))
@@ -77,7 +72,7 @@ class VoiceAssistantAPI:
         answer = clf.predict([text_vector])[0]
         func_name = answer.split()[0]
 
-        self.speak(answer.replace(func_name, ''))
+        self.speak(answer.replace(func_name + " ", ''))
 
         if func_name == "search":
             exec(func_name + f"('{re.sub(r"(искра|искорка) найди", "", data)}')")

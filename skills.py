@@ -65,7 +65,7 @@ def search(text):
     webbrowser.open(f"https://www.google.com/search?q={text}", new=2)
 
 def calc():
-     os.system('calc')
+    os.system('gnome-calculator')
 
 
 def offpc():
