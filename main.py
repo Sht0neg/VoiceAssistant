@@ -46,6 +46,11 @@ class VoiceAssistantAPI:
         except Exception as e:
             print("Ошибка в подключении к устройству ввода!")
     
+    def get_weather(self):
+            with open("data.json") as f:
+                data = json.load(f)
+                return f"Сейчас на улице {data["days"][0]["description"]}, {data["days"][0]["temp"]} градусов, ощущается как {data["days"][0]["feelslike"]} градусов, скорость ветра {data["days"][0]["windspeed"]} метров в секунду"
+
     def engine_init(self):
         self.engine = pyttsx3.init()
         self.engine.setProperty('rate', 180)	
@@ -81,6 +86,8 @@ class VoiceAssistantAPI:
             exec(func_name + f"('{re.sub(r"(искра|искорка) открой в ютубе", "", data)}')")
             return
         exec(func_name + '()')
+        if func_name == "weather":
+            self.speak(self.get_weather())
     
     def start_voice_assistant(self):
         self.get_input_device()

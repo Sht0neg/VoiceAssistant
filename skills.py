@@ -40,7 +40,7 @@ async def path_of_apps_in_json():
         json.dump(result, file, separators=(',\n', ': '))
     
 
-async def weather():
+def weather():
              
     with open("psw.json") as file:
         psw = json.load(file)
@@ -51,11 +51,7 @@ async def weather():
         data = weather.json()
         with open("data.json", "w") as f:
             json.dump(data, f)
-        with open("data.json") as f:
-            data = json.load(f)
     
-        
-
 def video():
     webbrowser.open("https://www.youtube.com", new=2)
 
