@@ -59,8 +59,14 @@ async def weather():
 def video():
     webbrowser.open("https://www.youtube.com", new=2)
 
+def video_search(text):
+    webbrowser.open(f"https://www.youtube.com/results?search_query={text}", new=2)
+
 def browser():
     webbrowser.open(f"https://www.google.com", new=2)
+
+def search(text):
+    webbrowser.open(f"https://www.google.com/search?q={text}", new=2)
 
 def calc():
      os.system('calc')

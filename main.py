@@ -73,9 +73,13 @@ class VoiceAssistantAPI:
         func_name = answer.split()[0]
 
         self.speak(answer.replace(func_name, ''))
-        print(answer.replace(func_name, ''))
 
-
+        if func_name == "search":
+            exec(func_name + f"('{re.sub(r"(искра|искорка) найди", "", data)}')")
+            return
+        if func_name == "video_search":
+            exec(func_name + f"('{re.sub(r"(искра|искорка) открой в ютубе", "", data)}')")
+            return
         exec(func_name + '()')
     
     def start_voice_assistant(self):
